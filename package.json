@@ -1,10 +1,42 @@
 {
-  "name": "isak-fire-premium",
-  "version": "1.0.0",
+  "name": "isak-fire",
+  "version": "2.0.0",
   "private": true,
-  "description": "Premium Isak Fire Protection website preview",
+  "type": "module",
+  "description": "Isak Fire Protection — fire protection systems, inspection and service across the Midwest and Ontario.",
+  "packageManager": "npm@11.12.1",
+  "engines": {
+    "node": ">=22.18.0"
+  },
   "scripts": {
-    "build": "python3 scripts/build.py",
-    "check": "python3 scripts/check.py"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint . --max-warnings=0",
+    "typecheck": "next typegen && tsc --noEmit",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "node --test \"lib/**/*.test.ts\"",
+    "test:e2e": "playwright test",
+    "check": "npm run format:check && npm run lint && npm run typecheck && npm run test"
+  },
+  "dependencies": {
+    "next": "16.4.2",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
+    "@playwright/test": "1.64.1",
+    "@tailwindcss/postcss": "4.3.3",
+    "@types/node": "^24",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.4.2",
+    "prettier": "3.9.10",
+    "prettier-plugin-tailwindcss": "0.8.1",
+    "tailwindcss": "4.3.3",
+    "typescript": "^5"
   }
 }

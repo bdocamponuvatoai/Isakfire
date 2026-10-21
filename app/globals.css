@@ -1,0 +1,287 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------------------
+   Tokens. Navy, blue and red are sampled from the Isak badge on isakfire.com.
+   The paper and concrete neutrals are cool, like a plan-room wall; tag yellow
+   is the inspection tag hung on every serviced riser and is used only there.
+--------------------------------------------------------------------------- */
+@theme {
+  --font-sans: var(--font-public-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: var(--font-big-shoulders), "Arial Narrow", ui-sans-serif, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+
+  --color-navy-950: #001a29;
+  --color-navy-900: #00243a;
+  --color-navy: #00304a;
+  --color-navy-700: #0b4262;
+  --color-blue: #004880;
+  --color-blue-500: #0068ad;
+  --color-sky: #8fc3e6;
+  --color-sky-100: #dcedf8;
+  --color-red: #b82020;
+  --color-red-700: #961818;
+  --color-red-400: #ff8a80;
+  --color-tag: #f4c430;
+  --color-paper: #f6f6f3;
+  --color-concrete-100: #ecece7;
+  --color-concrete-200: #dcddd6;
+  --color-concrete-300: #c4c6bd;
+  --color-steel: #4b5b66;
+  --color-ink: #00243a;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --breakpoint-xs: 30rem;
+}
+
+/* ---------------------------------------------------------------------------
+   Base
+--------------------------------------------------------------------------- */
+@layer base {
+  html {
+    color-scheme: light;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    scroll-padding-top: 6rem;
+    scrollbar-gutter: stable;
+    background-color: var(--color-paper);
+    --focus: var(--color-blue);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  html:has(dialog[open]) {
+    overflow: hidden;
+  }
+
+  body {
+    min-height: 100vh;
+    min-height: 100dvh;
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  :where(h1, h2, h3, h4) {
+    text-wrap: balance;
+  }
+
+  :where(p, li, dd) {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background-color: var(--color-tag);
+    color: var(--color-navy);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  [data-theme="dark"] {
+    --focus: var(--color-tag);
+  }
+
+  button,
+  [role="button"],
+  summary {
+    cursor: pointer;
+  }
+
+  summary {
+    list-style: none;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  dialog {
+    max-width: none;
+    max-height: none;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+  }
+
+  dialog::backdrop {
+    background: rgb(0 26 41 / 0.6);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Layout and type utilities
+--------------------------------------------------------------------------- */
+@utility shell {
+  width: 100%;
+  max-width: 90rem;
+  margin-inline: auto;
+  padding-inline: clamp(1rem, 4.5vw, 4rem);
+}
+
+@utility section-y {
+  padding-block: clamp(4.5rem, 3.5rem + 5vw, 8.5rem);
+}
+
+/* Big Shoulders is a condensed face, so display sizes run larger than usual. */
+@utility text-display-xl {
+  font-family: var(--font-display);
+  font-size: clamp(3.5rem, 1.75rem + 5.6vw, 8rem);
+  font-weight: 800;
+  line-height: 0.86;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+}
+
+@utility text-display {
+  font-family: var(--font-display);
+  font-size: clamp(2.75rem, 1.75rem + 4.4vw, 6.25rem);
+  font-weight: 800;
+  line-height: 0.9;
+  letter-spacing: -0.005em;
+  text-transform: uppercase;
+}
+
+@utility text-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 1.4rem + 1.4vw, 2.75rem);
+  font-weight: 700;
+  line-height: 0.98;
+  text-transform: uppercase;
+}
+
+@utility text-lede {
+  font-size: clamp(1.0625rem, 1rem + 0.35vw, 1.3125rem);
+  line-height: 1.55;
+}
+
+/* Code references and record stamps only (NFPA 13, 01 / PLAN). */
+@utility mono-label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+@utility rule {
+  border-color: color-mix(in srgb, currentColor 18%, transparent);
+}
+
+/* ---------------------------------------------------------------------------
+   Motion. Everything below is progressive: with no JavaScript or with reduced
+   motion, content is simply visible.
+--------------------------------------------------------------------------- */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 1.5rem, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes punch {
+  0% {
+    transform: scale(0);
+  }
+  70% {
+    transform: scale(1.15);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .intro-rise {
+    animation: rise 1.1s var(--ease-out-expo) both;
+    animation-delay: var(--delay, 0ms);
+  }
+
+  .intro-fade {
+    animation: fade 1.4s ease-out both;
+    animation-delay: var(--delay, 0ms);
+  }
+}
+
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  [data-reveal] {
+    opacity: 0;
+    transform: translate3d(0, 1.75rem, 0);
+    transition:
+      opacity 0.9s var(--ease-out-expo),
+      transform 1.1s var(--ease-out-expo);
+    transition-delay: var(--delay, 0ms);
+  }
+
+  [data-reveal="image"] {
+    opacity: 1;
+    transform: none;
+    clip-path: inset(0 0 8% 0);
+    transition: clip-path 1.3s var(--ease-out-expo);
+  }
+
+  [data-reveal][data-revealed] {
+    opacity: 1;
+    transform: none;
+  }
+
+  [data-reveal="image"][data-revealed] {
+    clip-path: inset(0 0 0 0);
+  }
+
+  /* Inspection tag: the punches land one by one once the tag is in view. */
+  [data-reveal="tag"] {
+    opacity: 1;
+    transform: none;
+  }
+
+  [data-reveal="tag"] .tag-punch {
+    transform: scale(0);
+  }
+
+  [data-reveal="tag"][data-revealed] .tag-punch {
+    animation: punch 0.45s var(--ease-out-expo) both;
+    animation-delay: calc(400ms + var(--i, 0) * 180ms);
+  }
+}
+
+/* Mobile menu: full-height sheet. */
+.sheet {
+  inset: 0;
+  margin: 0;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .sheet[open] {
+    animation: fade 0.3s ease-out;
+  }
+}

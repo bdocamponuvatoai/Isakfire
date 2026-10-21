@@ -1,72 +1,99 @@
-# Isak Fire Protection — premium design preview
+# Isak Fire Protection website
 
-A complete, responsive marketing website built around Isak Fire's existing identity, nine service disciplines and six published locations. The design uses an open white canvas, navy and red, a photorealistic branded team-and-vehicle hero, product-focused equipment imagery, editorial architecture and service photography, and a guided quote planner.
+Marketing site for [Isak Fire Protection, Inc.](https://isakfire.com/): fire sprinklers, alarms, suppression, monitoring and inspection for commercial, industrial and residential buildings in Illinois, Michigan, Ohio, Indiana, Wisconsin and Ontario.
 
-## Run and edit
+Built with Next.js 16 (App Router), React 19, Tailwind CSS 4 and TypeScript. Every route is prerendered as static HTML. It started as a ChatGPT-generated static site; the original is preserved in the first commit (`chore: import original ChatGPT build`).
 
-The site uses semantic HTML, CSS and JavaScript with a small Python build script. There are no third-party runtime scripts, package dependencies, external fonts or framework services.
+## Scripts
+
+Requires Node 22.18 or later (`.nvmrc` pins 24).
+
+| Command            | What it does                                                                              |
+| ------------------ | ----------------------------------------------------------------------------------------- |
+| `npm run dev`      | Development server on http://localhost:3000                                               |
+| `npm run build`    | Production build                                                                          |
+| `npm run start`    | Serve the production build                                                                |
+| `npm run check`    | Format check, zero-warning lint, typecheck, unit tests (what CI runs)                     |
+| `npm run format`   | Format with Prettier (sorts Tailwind classes)                                             |
+| `npm test`         | Unit tests for the quote planner logic (`node --test`, no framework)                      |
+| `npm run test:e2e` | Playwright against the production build: Chromium, Firefox and WebKit, desktop and mobile |
+
+To run e2e locally, build first, then reuse an installed Edge or Chrome for the Chromium projects:
 
 ```sh
-python3 scripts/build.py
-python3 scripts/check.py
-node --check dist/app.js
-python3 -m http.server 4173 --directory dist
+npm run build
+npx playwright install firefox webkit   # once
+PW_CHANNEL=msedge npx playwright test
 ```
 
-Open http://localhost:4173. `npm run build` and `npm run check` are aliases. The complete deployable website is in `dist/`. Edit `content.json` for services, locations, FAQ answers, journal entries and careers. Shared page templates are in `scripts/build.py`; presentation and interactions are in `dist/styles.css` and `dist/app.js`. The build regenerates HTML and preserves assets, CSS and JavaScript. Hosting identity lives in `.openai/hosting.json`.
+## Environment
 
-## Included experience
+Copy `.env.example` to `.env.local`.
 
-- Homepage, service directory and nine individual service pages
-- Company, locations, contact and careers pages
-- Searchable, category-filtered FAQ with native accessible disclosures
-- Filterable journal index linking to the company's original published articles
-- Client and partner access information preserving the source site's coming-soon status
-- Four-step quote planner with validation, query-string service/location preselection, review, copy, and an email-draft action
-- Responsive mobile dialog navigation, keyboard-accessible service tabs, reduced-motion support and visible focus states
-- Local fonts, compressed WebP assets, metadata, noindex/nofollow and a custom 404 page
+| Variable                     | Default                                             | Purpose                                                                                                                |
+| ---------------------------- | --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `NEXT_PUBLIC_SITE_URL`       | Vercel production URL, else `http://localhost:3000` | Canonical origin for metadata, sitemap and structured data                                                             |
+| `NEXT_PUBLIC_ALLOW_INDEXING` | `false`                                             | Set to `true` only after the owner approves launch. Until then every page is `noindex` and `robots.txt` disallows all. |
 
-The quote planner does not send email, submit leads, store personal entries or claim successful delivery. Visitors explicitly open a draft addressed to sales@isakfire.com and send it in their own email app. Attachments can be added there. Client/partner account backends are not connected. Payment links point to the existing company Stripe page; this website does not collect or process payment details.
+## Structure
 
-## Content research and source decisions
+```text
+app/                    routes, layout, metadata routes (robots, sitemap, manifest, icons), 404 and error boundaries
+  services/[slug]/      nine service pages, generated at build time
+  quote/                four-step quote planner
+components/
+  sections/             homepage sections
+  quote/quote-planner   planner UI (client component)
+  inspection-tag.tsx    the signature "service tag" illustration
+  locations-map.tsx     offices plotted from real city coordinates
+lib/
+  site.ts               business facts, offices, navigation: the single source of truth
+  content.ts            services, FAQs, articles, roles, lifecycle
+  quote.ts              pure planner logic (validation, presets, message, mailto), unit-tested
+e2e/                    Playwright specs, including axe WCAG 2.2 AA scans
+assets/images/          images imported by next/image
+source-assets/          originals and retired images, not deployed
+docs/                   content provenance and image prompts
+```
 
-Reviewed October 22, 2026 (Asia/Manila):
+## How the quote planner works
 
-- https://isakfire.com/ — nine services, six locations, phone numbers, office address, email and hours.
-- https://isakfire.com/faqs.html — company service process, inspection documentation, construction/retrofit work, recurring programs and portfolio support.
-- https://isakfire.com/careers.html — the four listed field roles, published requirements and certification support.
-- https://isakfire.com/news.html — all twelve published article topics and month/year labels. Entries are rewritten summaries; full articles remain on the current website.
-- https://isakfire.com/quote.html — sales contact and the project's contact/property/service/review sequence.
-- https://isakfire.com/portal.html and https://isakfire.com/partners.html — both describe portals as coming soon. No fictional login flow was created.
-- https://buy.stripe.com/eVa4iy7Qqbsk5CUeUV — original Pay Now destination.
-- https://www.nfpa.org/product/nfpa-25-standard-for-the-inspection-testing-and-maintenance-of-water-based-fire-protection-systems/p0025code — title and scope of NFPA 25.
-- https://www.ul.com/services/fire-extinguishing-system-unit-testing — UL 300 scope.
+The planner collects services, property details and contact details, then opens a pre-filled email to sales@isakfire.com in the visitor's own email app. **Nothing is sent or stored by the site.** The review step says so, and the message never implies a booking (there's a unit test for that). `?service=<slug>` and `?region=<IL|MI|OH|IN|WI|ON>` preselect options, and unknown values are ignored.
 
-Copy is restructured for clarity. Technical intervals, universal compliance promises, insurance-coverage claims and jurisdiction-specific code adoption dates from the source were not repeated as universal requirements. The user-facing FAQ directs property-specific requirements to the qualified team and local authority. Current job availability must be confirmed. The homepage reports the six listed locations rather than implying guaranteed service everywhere. No testimonials, certifications, project results or customer logos were invented.
+The current isakfire.com form posts to Formspree. Switching to it is a launch decision; see [docs/content-sources.md](docs/content-sources.md).
 
-## Original logo
+## Design system
 
-`dist/assets/isak-logo.jpg` is the unchanged existing Isak Fire Protection badge, retrieved from the company's public profile at https://theorg.com/org/isak-fire-protection (asset: https://cdn.theorg.com/378c88a9-63f0-43bb-9ece-88fc4af0b4c5_thumb.jpg). Direct visual access to isakfire.com failed in this environment, while indexed public website content was available. The supplied public badge is 200 × 200; it is kept at small display sizes. The header and footer continue to use this original JPEG. The browser favicon uses a separate transparent derivative produced with built-in image editing and resized to PNG and ICO formats. A higher-resolution original can replace this file without changing layouts.
+Tokens live in `app/globals.css` under `@theme`.
 
-## Generated assets
+- **Colour:** navy `#00304a`, blue `#004880` and red `#b82020`, all sampled from the Isak badge, on a cool paper `#f6f6f3`. Tag yellow `#f4c430` appears only on the inspection tag. All text pairs meet 4.5:1. On dark surfaces, text uses the `sky` tokens rather than white at reduced opacity.
+- **Type:** Big Shoulders for display (drawn for the City of Chicago, Isak's HQ; its condensed weight echoes the ISAK lettermark), Public Sans for body, IBM Plex Mono only for code references and record stamps.
+- **Signature:** the punched inspection tag, the record left on every serviced system, with punches that land on reveal.
+- **Logo:** the badge's navy "EST. 2014" disappears on navy, so the logo always sits on a light ground.
+- **Images:** every generated image carries a visible "Illustrative image" label. See [docs/image-generation.md](docs/image-generation.md).
+- **Motion:** progressive. With reduced motion or no JavaScript, everything is simply visible.
 
-Built-in image generation was used, then the images were compressed to WebP. All generated scenes are illustrative; they do not represent actual Isak equipment designs, projects or employees. The site identifies them as concepts and repeats this boundary in the preview footer.
+## Security
 
-| File | Prompt / art direction |
-| --- | --- |
-| `dist/assets/isak-office-field-hero.webp` | Edited version of the team hero with two field technicians, two office staff in white/light-blue shirts, and two staff in navy polos. Original faces, composition and branded van retained. Full prompt: `assets-update-prompts.txt`. |
-| `dist/assets/isak-favicon-32.png`, `dist/assets/isak-favicon-96.png`, `dist/favicon.ico` | Transparent-background derivative of the original badge; internal white lettering retained. Full prompt: `assets-update-prompts.txt`. |
-| `dist/assets/isak-team-hero.webp` | Six fire-protection technicians in navy uniforms bearing the existing Isak badge, with a white branded service van outside a commercial facility; natural late-afternoon photography and quiet space for the headline. Built-in image generation with the original badge as a reference. Full prompt: `assets-team-prompt.txt`. |
-| `dist/assets/hero.webp` | Photorealistic studio concept of a red steel fire protection valve assembly, polished gauge, machined fittings, soft off-white seamless background, precise industrial product photography; no logos or text. |
-| `dist/assets/facility.webp` | Editorial architecture photograph of a contemporary commercial atrium, pale stone and glass, morning light, calm empty plaza; no logos or real customer claim. |
-| `dist/assets/technician.webp` | Illustrative technician with white hard hat, clear safety glasses and navy shirt reviewing a tablet beside red riser pipes, natural documentary light; no branding or real-employee claim. |
+Production responses send a strict CSP, HSTS (two years, preload), `X-Frame-Options: DENY`, `nosniff`, a strict referrer policy, COOP and a restrictive Permissions-Policy. An e2e test asserts them. There are no third-party scripts, cookies or analytics. Adding any (analytics, embeds, Formspree) means extending the CSP in `next.config.ts`, or the e2e console check will fail.
 
-The Manrope and Inter font files are self-hosted under `dist/assets/`.
+## Deployment
 
-## Validation
+Deploy on Vercel; there's no server code, so any static-capable Node host works. Every pull request runs CI (`.github/workflows/ci.yml`): `npm run check`, build, `npm audit --omit=dev`, then the e2e suite against that exact build.
 
-The build, JavaScript syntax and local link/asset/anchor checks are available in the commands above. Browser QA covers desktop and mobile layout, service tabs and filters, FAQ search, navigation, careers disclosures and the full quote review flow without sending an inquiry or processing a payment.
+## Known advisories
 
-The updated homepage hero uses the new 1672 × 941 team asset. Desktop uses a full-width photo with a readability gradient. Tablet and mobile bring the headline above the photograph and crop only the empty left side, preserving all six technicians and the vehicle badge. The original equipment asset remains on service detail pages.
+- `npm audit` reports high-severity `braces` advisories through `eslint-config-next`. They're dev-only (`npm audit --omit=dev` is clean, and CI checks it). Don't run `npm audit fix --force`: it downgrades Next's ESLint config.
+- Turbopack logs "Failed to find font override values for font `Big Shoulders`". Next has no fallback metrics for this face; `adjustFontFallback` is off and the CSS stack falls back to Arial Narrow. It's harmless.
+- Locally, Playwright runs three workers. Headless Firefox throttles animation frames under heavy CPU load, which stalls Playwright's stability checks.
 
-The current homepage uses `isak-office-field-hero.webp`; the preceding all-navy-uniform concept remains available in assets. All pages use transparent PNG/ICO favicons.
+## Before launch
+
+- [ ] Client confirms every item in [docs/content-sources.md § Claims left off](docs/content-sources.md#claims-on-the-live-site-that-we-left-off)
+- [ ] Replace the generated team hero with a real team or fleet photo, or get explicit approval to keep it labelled
+- [ ] Get a vector logo from the client
+- [ ] Decide email draft vs Formspree for the quote planner
+- [ ] Set `NEXT_PUBLIC_SITE_URL` to the production domain and `NEXT_PUBLIC_ALLOW_INDEXING=true`
+- [ ] Test the call buttons and a real quote email on the owner's phone
+- [ ] Submit `sitemap.xml` to Google Search Console
+- [ ] Re-run Lighthouse on the live domain before quoting any score
