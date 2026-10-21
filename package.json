@@ -1,0 +1,10 @@
+{
+  "name": "isak-fire-premium",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Premium Isak Fire Protection website preview",
+  "scripts": {
+    "build": "python3 scripts/build.py",
+    "check": "python3 scripts/check.py"
+  }
+}
