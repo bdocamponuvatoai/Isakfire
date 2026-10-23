@@ -1,9 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
+import igvLogo from "@/assets/images/igv-logo-on-ink.webp";
 import logo from "@/assets/images/isak-logo.png";
 import { ArrowUpRight } from "@/components/icons";
 import { services } from "@/lib/content";
-import { business, locations, navigation, secondaryNavigation } from "@/lib/site";
+import { business, navigation, secondaryNavigation } from "@/lib/site";
 
 const linkClass = "inline-flex min-h-10 items-center text-sky-100 transition-colors hover:text-white";
 
@@ -18,6 +19,9 @@ export function SiteFooter() {
           </Link>
           <p className="mt-6 max-w-[30ch] text-[0.9375rem]">
             Fire protection systems, inspection and service across five states and Ontario.
+          </p>
+          <p className="mt-4 max-w-[34ch] text-[0.8125rem] text-sky">
+            Images marked “Illustrative image” are not photographs of Isak staff, vehicles or projects.
           </p>
         </div>
 
@@ -87,13 +91,45 @@ export function SiteFooter() {
         </div>
       </div>
 
-      <div className="border-t border-sky/20">
-        <div className="shell flex flex-col gap-3 py-6 text-[0.8125rem] md:flex-row md:items-center md:justify-between">
+      <div className="shell pb-8 lg:pb-12">
+        {/* Studio credit, shared across Isak Global Ventures sites. */}
+        <div className="flex flex-col items-center gap-3 border-t border-sky/20 pt-8 text-center text-[0.6875rem] tracking-[0.2em] text-sky uppercase md:flex-row md:justify-between md:text-left">
           <p>
             © {new Date().getFullYear()} {business.legalName}
           </p>
-          <p>{locations.map((l) => l.city).join(" · ")}</p>
-          <p>Images marked “Illustrative image” are not photographs of Isak staff, vehicles or projects.</p>
+          <p>{business.tagline}.</p>
+          <p>
+            Website design &amp; development by{" "}
+            <a
+              href="https://nuvato.ai/"
+              target="_blank"
+              rel="noopener"
+              className="inline-flex min-h-11 items-center gap-1 text-white underline underline-offset-4 transition-opacity hover:opacity-75"
+            >
+              Nuvato AI
+              <ArrowUpRight className="text-[0.875rem]" />
+              <span className="sr-only">(opens in a new tab)</span>
+            </a>
+          </p>
+        </div>
+
+        {/* Parent-company badge. The logo is decorative: the caption names the company. */}
+        <div className="mt-6 flex justify-center border-t border-sky/20 pt-8">
+          <a
+            href="https://isakglobalventures.com/"
+            target="_blank"
+            rel="noopener"
+            className="group inline-flex min-h-11 flex-col items-center gap-4 rounded-2xl px-4 py-2 text-[0.8125rem] tracking-[0.02em] text-sky transition-colors hover:text-white sm:flex-row sm:gap-8"
+          >
+            <span>Proudly part of Isak Global Ventures</span>
+            <Image
+              src={igvLogo}
+              alt=""
+              sizes="102px"
+              className="h-8 w-auto opacity-90 transition-opacity group-hover:opacity-100"
+            />
+            <span className="sr-only">(opens in a new tab)</span>
+          </a>
         </div>
       </div>
     </footer>
