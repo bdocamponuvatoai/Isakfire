@@ -4,6 +4,8 @@ Marketing site for [Isak Fire Protection, Inc.](https://isakfire.com/): fire spr
 
 Built with Next.js 16 (App Router), React 19, Tailwind CSS 4 and TypeScript. Every route is prerendered as static HTML. It started as a ChatGPT-generated static site; the original is preserved in the first commit (`chore: import original ChatGPT build`).
 
+New to the codebase? Read [CONTRIBUTING.md](CONTRIBUTING.md) for the workflow and where things live, and [SECURITY.md](SECURITY.md) for the security model.
+
 ## Scripts
 
 Requires Node 22.18 or later (`.nvmrc` pins 24).
@@ -15,7 +17,7 @@ Requires Node 22.18 or later (`.nvmrc` pins 24).
 | `npm run start`    | Serve the production build                                                                |
 | `npm run check`    | Format check, zero-warning lint, typecheck, unit tests (what CI runs)                     |
 | `npm run format`   | Format with Prettier (sorts Tailwind classes)                                             |
-| `npm test`         | Unit tests for the quote planner logic (`node --test`, no framework)                      |
+| `npm test`         | Unit tests for `lib/` (quote logic, structured data) with `node --test`, no framework     |
 | `npm run test:e2e` | Playwright against the production build: Chromium, Firefox and WebKit, desktop and mobile |
 
 To run e2e locally, build first, then reuse an installed Edge or Chrome for the Chromium projects:
@@ -38,22 +40,28 @@ Copy `.env.example` to `.env.local`.
 ## Structure
 
 ```text
-app/                    routes, layout, metadata routes (robots, sitemap, manifest, icons), 404 and error boundaries
-  services/[slug]/      nine service pages, generated at build time
-  quote/                four-step quote planner
+app/                      routes, root layout, metadata routes (robots, sitemap, manifest, icons), 404, error boundaries
+  services/[slug]/        nine service pages, generated at build time
+  quote/                  quote planner page
 components/
-  sections/             homepage sections
-  quote/quote-planner   planner UI (client component)
-  inspection-tag.tsx    the signature "service tag" illustration
-  locations-map.tsx     offices plotted from real city coordinates
-lib/
-  site.ts               business facts, offices, navigation: the single source of truth
-  content.ts            services, FAQs, articles, roles, lifecycle
-  quote.ts              pure planner logic (validation, presets, message, mailto), unit-tested
-e2e/                    Playwright specs, including axe WCAG 2.2 AA scans
-assets/images/          images imported by next/image
-source-assets/          originals and retired images, not deployed
-docs/                   content provenance and image prompts
+  sections/               homepage sections, one file each
+  quote/                  planner: state (quote-planner), fields, step indicator, review step, options
+  site-header.tsx         header and mobile menu (native <dialog>)
+  site-footer.tsx         footer, Nuvato AI credit, Isak Global Ventures badge
+  ui.tsx, icons.tsx       shared primitives (cx, buttonClass, IllustrativeImage, inline SVG icons)
+  inspection-tag.tsx      the signature "service tag" illustration
+  locations-map.tsx       offices plotted from real city coordinates
+lib/                      pure, framework-free modules; the single source of truth
+  site.ts                 business facts, offices, navigation, footer credits
+  content.ts              services, FAQs, articles, roles, lifecycle
+  quote.ts                planner logic: validation, URL presets, message, mailto
+  structured-data.ts      schema.org JSON-LD and its safe serialisation
+  *.test.ts               unit tests (node --test)
+e2e/                      Playwright specs: pages, hero geometry, footer, quote planner, navigation, axe
+assets/images/            images imported by next/image
+source-assets/            original logo file, not deployed
+docs/                     content provenance and image prompts
+.github/                  CI, CodeQL, Dependabot, PR template, CODEOWNERS
 ```
 
 ## How the quote planner works
@@ -68,6 +76,7 @@ Tokens live in `app/globals.css` under `@theme`.
 
 - **Colour:** navy `#00304a`, blue `#004880` and red `#b82020`, all sampled from the Isak badge, on a cool paper `#f6f6f3`. Tag yellow `#f4c430` appears only on the inspection tag. All text pairs meet 4.5:1. On dark surfaces, text uses the `sky` tokens rather than white at reduced opacity.
 - **Type:** Big Shoulders for display (drawn for the City of Chicago, Isak's HQ; its condensed weight echoes the ISAK lettermark), Public Sans for body, IBM Plex Mono only for code references and record stamps.
+- **Hero:** the team photo always keeps its 1672:941 shape, so it's never cropped. On desktop it sits bottom-right at 72% width, faded into the navy, and the hero is never shorter than the photo (`e2e/hero.spec.ts` checks this at 10 viewports).
 - **Signature:** the punched inspection tag, the record left on every serviced system, with punches that land on reveal.
 - **Logo:** the badge's navy "EST. 2014" disappears on navy, so the logo always sits on a light ground.
 - **Images:** every generated image carries a visible "Illustrative image" label. See [docs/image-generation.md](docs/image-generation.md).
@@ -75,11 +84,11 @@ Tokens live in `app/globals.css` under `@theme`.
 
 ## Security
 
-Production responses send a strict CSP, HSTS (two years, preload), `X-Frame-Options: DENY`, `nosniff`, a strict referrer policy, COOP and a restrictive Permissions-Policy. An e2e test asserts them. There are no third-party scripts, cookies or analytics. Adding any (analytics, embeds, Formspree) means extending the CSP in `next.config.ts`, or the e2e console check will fail.
+Production responses send a strict CSP, HSTS (two years, preload), `X-Frame-Options: DENY`, `nosniff`, a strict referrer policy, COOP and a restrictive Permissions-Policy. An e2e test asserts them. There are no third-party scripts, cookies or analytics, and CodeQL scans every pull request. See [SECURITY.md](SECURITY.md) for the full model and the rules for contributors.
 
 ## Deployment
 
-Deploy on Vercel; there's no server code, so any static-capable Node host works. Every pull request runs CI (`.github/workflows/ci.yml`): `npm run check`, build, `npm audit --omit=dev`, then the e2e suite against that exact build.
+Deploy on Vercel; there's no server code, so any static-capable Node host works. Every pull request runs CI (`.github/workflows/ci.yml`): `npm run check`, build, `npm audit --omit=dev`, then the e2e suite against that exact build. `main` is protected: changes land by squash-merging a pull request with both checks green.
 
 ## Known advisories
 

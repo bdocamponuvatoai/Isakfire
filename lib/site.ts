@@ -30,6 +30,12 @@ export const business = {
   partnersUrl: "https://isakfire.com/partners.html",
 } as const;
 
+/** Footer credits shared across Isak Global Ventures sites. */
+export const credits = {
+  studio: { name: "Nuvato AI", url: "https://nuvato.ai/" },
+  parent: { name: "Isak Global Ventures", url: "https://isakglobalventures.com/" },
+} as const;
+
 export type Location = {
   slug: string;
   city: string;

@@ -4,6 +4,11 @@
   "private": true,
   "type": "module",
   "description": "Isak Fire Protection — fire protection systems, inspection and service across the Midwest and Ontario.",
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bdocamponuvatoai/Isakfire.git"
+  },
   "packageManager": "npm@11.12.1",
   "engines": {
     "node": ">=22.18.0"

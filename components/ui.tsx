@@ -47,38 +47,23 @@ export function IllustrativeImage({
   sizes,
   className,
   imageClassName,
-  preload,
-  labelClassName,
-  reveal = true,
 }: {
   src: StaticImageData;
   alt: string;
   sizes: string;
   className?: string;
   imageClassName?: string;
-  preload?: boolean;
-  labelClassName?: string;
-  reveal?: boolean;
 }) {
   return (
-    <figure
-      className={cx("relative overflow-hidden bg-concrete-200", className)}
-      data-reveal={reveal ? "image" : undefined}
-    >
+    <figure className={cx("relative overflow-hidden bg-concrete-200", className)} data-reveal="image">
       <Image
         src={src}
         alt={alt}
         sizes={sizes}
         placeholder="blur"
-        preload={preload}
         className={cx("size-full object-cover", imageClassName)}
       />
-      <figcaption
-        className={cx(
-          "absolute bottom-3 left-3 rounded-[2px] bg-navy-950/85 px-2 py-1 mono-label text-[0.6875rem] text-white",
-          labelClassName,
-        )}
-      >
+      <figcaption className="absolute bottom-3 left-3 rounded-[2px] bg-navy-950/85 px-2 py-1 mono-label text-[0.6875rem] text-white">
         Illustrative image
       </figcaption>
     </figure>

@@ -4,7 +4,7 @@ import igvLogo from "@/assets/images/igv-logo-on-ink.webp";
 import logo from "@/assets/images/isak-logo.png";
 import { ArrowUpRight } from "@/components/icons";
 import { services } from "@/lib/content";
-import { business, navigation, secondaryNavigation } from "@/lib/site";
+import { business, credits, navigation, secondaryNavigation } from "@/lib/site";
 
 const linkClass = "inline-flex min-h-10 items-center text-sky-100 transition-colors hover:text-white";
 
@@ -101,12 +101,12 @@ export function SiteFooter() {
           <p>
             Website design &amp; development by{" "}
             <a
-              href="https://nuvato.ai/"
+              href={credits.studio.url}
               target="_blank"
               rel="noopener"
               className="inline-flex min-h-11 items-center gap-1 text-white underline underline-offset-4 transition-opacity hover:opacity-75"
             >
-              Nuvato AI
+              {credits.studio.name}
               <ArrowUpRight className="text-[0.875rem]" />
               <span className="sr-only">(opens in a new tab)</span>
             </a>
@@ -116,12 +116,12 @@ export function SiteFooter() {
         {/* Parent-company badge. The logo is decorative: the caption names the company. */}
         <div className="mt-6 flex justify-center border-t border-sky/20 pt-8">
           <a
-            href="https://isakglobalventures.com/"
+            href={credits.parent.url}
             target="_blank"
             rel="noopener"
             className="group inline-flex min-h-11 flex-col items-center gap-4 rounded-2xl px-4 py-2 text-[0.8125rem] tracking-[0.02em] text-sky transition-colors hover:text-white sm:flex-row sm:gap-8"
           >
-            <span>Proudly part of Isak Global Ventures</span>
+            <span>Proudly part of {credits.parent.name}</span>
             <Image
               src={igvLogo}
               alt=""
