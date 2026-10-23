@@ -14,6 +14,8 @@ Replace these with real job, team and fleet photos as the client supplies them. 
 
 `assets/images/isak-logo.png` is Isak's own badge (400 × 338, transparent), taken from isakfire.com on 2026-10-22. `app/icon.png`, `app/apple-icon.png` and `public/og.jpg` are generated from it with `sharp`. The badge's navy "EST. 2014" lettering disappears on navy, so the logo always sits on a light ground. `source-assets/isak-logo-theorg-200.jpg` is the low-resolution copy the ChatGPT build used. Ask the client for a vector (SVG or PDF) original.
 
+`assets/images/igv-logo-on-ink.webp` (261 × 82, transparent) is the Isak Global Ventures parent-company logo, light version for dark backgrounds, used in the footer badge. Copied from the shared IGV asset used across IGV brand sites (taken from the Gold Coast Building repo, `public/assets/igv-logo-on-ink.webp`). Not generated.
+
 ## Prompts
 
 ### Team hero (`team-hero.webp`)
