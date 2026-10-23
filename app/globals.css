@@ -138,7 +138,9 @@
 /* Big Shoulders is a condensed face, so display sizes run larger than usual. */
 @utility text-display-xl {
   font-family: var(--font-display);
-  font-size: clamp(3.5rem, 1.75rem + 5.6vw, 8rem);
+  /* Capped by height too, so wide-but-short screens keep the hero on one screen. */
+  font-size: clamp(3.5rem, min(1.75rem + 5.6vw, 11vh), 8rem);
+  font-size: clamp(3.5rem, min(1.75rem + 5.6vw, 11svh), 8rem);
   font-weight: 800;
   line-height: 0.86;
   letter-spacing: -0.01em;
@@ -268,6 +270,18 @@
   [data-reveal="tag"][data-revealed] .tag-punch {
     animation: punch 0.45s var(--ease-out-expo) both;
     animation-delay: calc(400ms + var(--i, 0) * 180ms);
+  }
+}
+
+/* Desktop hero photo: fade its left and top edges into the navy so the
+   uncropped photo blends with the headline area. */
+@media (min-width: 64rem) {
+  .hero-photo-fade {
+    -webkit-mask-image:
+      linear-gradient(90deg, transparent 0%, #000 26%), linear-gradient(180deg, transparent 0%, #000 14%);
+    mask-image: linear-gradient(90deg, transparent 0%, #000 26%), linear-gradient(180deg, transparent 0%, #000 14%);
+    -webkit-mask-composite: source-in;
+    mask-composite: intersect;
   }
 }
 
