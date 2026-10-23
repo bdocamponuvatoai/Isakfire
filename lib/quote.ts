@@ -42,12 +42,15 @@ export const stageOptions = [
 export const propertyTypes = ["Commercial", "Industrial", "Residential", "Multiple properties"] as const;
 export const contactPreferences = ["Email", "Phone call", "Either"] as const;
 
+/** The planner's steps, in order. `fields` lists what each step validates, in on-screen order. */
 export const steps = [
-  { title: "Your project", fields: ["services"] },
-  { title: "Your property", fields: ["propertyType", "region", "floors"] },
-  { title: "Your details", fields: ["firstName", "lastName", "email", "phone"] },
-  { title: "Review & email", fields: [] },
-] as const satisfies readonly { title: string; fields: readonly QuoteField[] }[];
+  { title: "Your project", heading: "What can we help with?", fields: ["services"] },
+  { title: "Your property", heading: "Tell us about the property.", fields: ["propertyType", "region", "floors"] },
+  { title: "Your details", heading: "Who should we contact?", fields: ["firstName", "lastName", "email", "phone"] },
+  { title: "Review & email", heading: "Review your request.", fields: [] },
+] as const satisfies readonly { title: string; heading: string; fields: readonly QuoteField[] }[];
+
+export const LAST_STEP = steps.length - 1;
 
 export function emptyDraft(): QuoteDraft {
   return {
@@ -181,7 +184,7 @@ export function quoteMessage(draft: QuoteDraft, options: QuoteOptions): string {
   return lines.join("\r\n");
 }
 
-export function quoteSubject(draft: QuoteDraft) {
+function quoteSubject(draft: QuoteDraft) {
   const who = draft.company.trim() || [draft.firstName, draft.lastName].map((part) => part.trim()).join(" ");
   return `Fire protection inquiry: ${who}`;
 }

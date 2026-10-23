@@ -5,8 +5,8 @@ import { MobileActionBar } from "@/components/mobile-action-bar";
 import { RevealObserver } from "@/components/reveal-observer";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { services } from "@/lib/content";
-import { allowIndexing, business, locations, siteUrl } from "@/lib/site";
+import { allowIndexing, business, siteUrl } from "@/lib/site";
+import { businessJsonLd, serializeJsonLd } from "@/lib/structured-data";
 import "./globals.css";
 
 const publicSans = Public_Sans({
@@ -62,34 +62,6 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
-const structuredData = {
-  "@context": "https://schema.org",
-  "@type": "LocalBusiness",
-  "@id": `${siteUrl}/#business`,
-  name: business.legalName,
-  url: siteUrl,
-  logo: `${siteUrl}/icon.png`,
-  image: `${siteUrl}/og.jpg`,
-  telephone: business.phone.e164,
-  email: business.email.office,
-  address: {
-    "@type": "PostalAddress",
-    streetAddress: business.address.street,
-    addressLocality: business.address.city,
-    addressRegion: business.address.region,
-    postalCode: business.address.postalCode,
-    addressCountry: business.address.country,
-  },
-  openingHoursSpecification: {
-    "@type": "OpeningHoursSpecification",
-    dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-    opens: "08:00",
-    closes: "16:00",
-  },
-  areaServed: locations.map((l) => ({ "@type": l.country === "CA" ? "AdministrativeArea" : "State", name: l.region })),
-  makesOffer: services.map((s) => ({ "@type": "Offer", itemOffered: { "@type": "Service", name: s.name } })),
-};
-
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en-US" className={`${publicSans.variable} ${bigShoulders.variable} ${plexMono.variable}`}>
@@ -109,8 +81,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <RevealObserver />
         <script
           type="application/ld+json"
-          // Static, server-defined data only; escape `<` to keep it inert.
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }}
+          // Static, server-defined data only; serializeJsonLd escapes `<`.
+          dangerouslySetInnerHTML={{ __html: serializeJsonLd(businessJsonLd(siteUrl)) }}
         />
       </body>
     </html>

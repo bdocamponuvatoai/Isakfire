@@ -11,11 +11,9 @@
   --font-mono: var(--font-plex-mono), ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
 
   --color-navy-950: #001a29;
-  --color-navy-900: #00243a;
   --color-navy: #00304a;
   --color-navy-700: #0b4262;
   --color-blue: #004880;
-  --color-blue-500: #0068ad;
   --color-sky: #8fc3e6;
   --color-sky-100: #dcedf8;
   --color-red: #b82020;
@@ -222,11 +220,6 @@
 @media (prefers-reduced-motion: no-preference) {
   .intro-rise {
     animation: rise 1.1s var(--ease-out-expo) both;
-    animation-delay: var(--delay, 0ms);
-  }
-
-  .intro-fade {
-    animation: fade 1.4s ease-out both;
     animation-delay: var(--delay, 0ms);
   }
 }
